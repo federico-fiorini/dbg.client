@@ -16,10 +16,14 @@
 my @drone_macs = qw/90:03:B7 A0:14:3D 00:12:1C 00:26:7E/;
 
 
-use strict;
+$num_args = $#ARGV + 1;
+if ($num_args != 2) {
+    print "\nUsage: monitor.pl wlan0 wlan0mon\n";
+    exit;
+}
 
-my $interface  = shift || "wlan0";
-my $interfaceMon  = shift || "wlan0mon";
+my $interface = $ARGV[0];
+my $interfaceMon = $ARGV[1];
 
 # paths to applications
 my $dhclient	= "dhclient";
@@ -34,11 +38,12 @@ my $nodejs	= "nodejs";
 # sudo("airmon-ng", "check", "kill");
 
 # put device into monitor mode
-# sudo($ifconfig, $interface, "down");
 sudo($airmon, "start", $interface);
 
 # tmpfile for ap output
 my $tmpfile = "tmp/dronestrike";
+my $tmpwpafile = "tmp/wpaconf";
+my $updatewpa = "bin/update_wpa.sh";
 my %skyjacked;
 
 
@@ -68,6 +73,7 @@ my %clients;
 my %chans;
 foreach my $tmpfile1 (glob("$tmpfile*.csv"))
 {
+    open(my $fh, '>>', $tmpwpafile) or die "Could not open file '$tmpwpafile' $!";
 	open(APS, "<$tmpfile1") || print "Can't read tmp file $tmpfile1: $!";
 	while (<APS>)
 	{
@@ -81,6 +87,12 @@ foreach my $tmpfile1 (glob("$tmpfile*.csv"))
 			{
 				#print "CHANNEL $1 $2 $3\n";
 				$chans{$1} = [$2, $3];
+
+				print "Add WPA $3";
+
+				print $fh "network={\n";
+				print $fh "ssid='$3'\n";
+                print $fh "}\n";
 			}
 
 			# grab our drone MAC and owner MAC
@@ -92,7 +104,10 @@ foreach my $tmpfile1 (glob("$tmpfile*.csv"))
 		}
 	}
 	close(APS);
+	close $fh;
 	sudo("rm", $tmpfile1);
+	sudo("bash", "$updatewpa");
+	sudo("rm", $tmpwpafile);
 	#unlink($tmpfile1);
 }
 print "\n\n";
@@ -108,3 +123,4 @@ sub sudo
 	# print "Running: @_\n";
 	system("sudo", @_);
 }
+

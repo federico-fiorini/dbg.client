@@ -20,7 +20,7 @@ def drone_hacked(drone):
     if response.status_code in (200, 201):
         return True
 
-    raise Exception
+    return False
 
 
 def hacking_in_progress(drone):
@@ -34,14 +34,14 @@ def hacking_in_progress(drone):
     if response.status_code in (200, 201):
         return True
 
-    raise Exception
+    return False
 
 
 def get_drone_status(drone_id):
     """
     Possible status
 
-    0: Not found
+    0: Needs to be hacked
     1: Hacking in progress
     -1: Already hacked
 
@@ -54,6 +54,14 @@ def get_drone_status(drone_id):
         return 0
 
     json_response = response.json()
+    if json_response['drone']['status'] == 'lost':
+        return 0
+
+    json_response = response.json()
+    if json_response['drone']['status'] == 'hack_failed':
+        return 0
+
+    json_response = response.json()
     if json_response['drone']['status'] == 'hacked':
         return -1
 
@@ -62,20 +70,26 @@ def get_drone_status(drone_id):
 
 
 def drone_lost(drone_id):
-    response = requests.delete(host + '/drone/' + drone_id)
 
-    if response.status_code == 200:
+    data['status'] = 'lost'
+    response = requests.put(host + '/drone/' + drone_id, data=json.dumps(data), headers=headers)
+
+    if response.status_code in (200, 201):
         return True
 
-    if response.status_code == 404:
-        return False
-
-    raise Exception
+    return False
 
 
 def log_fail(drone_id):
-    drone_lost(drone_id)
     print "UNABLE TO HACK DRONE %s" % drone_id
+
+    data['status'] = 'hack_failed'
+    response = requests.put(host + '/drone/' + drone_id, data=json.dumps(data), headers=headers)
+
+    if response.status_code in (200, 201):
+        return True
+
+    return False
 
 
 class DroneLostException(Exception):

