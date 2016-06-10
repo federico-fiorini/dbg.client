@@ -6,7 +6,7 @@
     iwconfig
 
     # Set env variable
-    export MONITOR_INTERFACE="interface [wlan0 or wlan1]"
+    export MONITOR_INTERFACE="interface [wlan0mon or wlan1mon]"
 
     # Kill some processes that might interfere with airmon-ng
     sudo airmon-ng check kill
