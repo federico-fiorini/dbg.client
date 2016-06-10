@@ -120,7 +120,7 @@ foreach my $cli (keys %clients)
 	
 sub sudo
 {
-	# print "Running: @_\n";
+	print "Running: @_\n";
 	system("sudo", @_);
 }
 
