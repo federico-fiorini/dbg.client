@@ -58,10 +58,10 @@ var sendAway = function sendAway(navData) {
     }
 }
 
-//client.takeoff();
-//console.log('took off');
+client.takeoff();
+console.log('took off');
 
-// Calibrate Magnetometer
+//Calibrate Magnetometer
 // client.after(5000, function() {
 // 	console.log('calibrate');
 // 	this.calibrate(0);
@@ -72,16 +72,19 @@ var sendAway = function sendAway(navData) {
 // 	this.once('navdata', sendAway);
 // });
 
-// client.after(1000, function() {
-// 	console.log('stop and land');
-// 	this.stop();
-// 	this.land();
-// });
-
-
-
-client.stop();
-client.land();
-client.after(1000, function() {
-	process.exit();
+client.after(2000, function() {
+	console.log('stop and land');
+	this.stop();
+	this.land();
+	this.after(1000, function() {
+		process.exit();
+	})
 });
+
+
+
+// client.stop();
+// client.land();
+// client.after(1000, function() {
+// 	process.exit();
+// });

@@ -14,7 +14,8 @@ try:
 except IndexError:
     pass
 
-from drone import get_drone_status, hacking_in_progress, drone_hacked, drone_lost, log_fail, DroneLostException
+from drone import get_drone_status, hacking_in_progress, drone_hacked, drone_lost,\
+    log_fail, DroneLostException, drone_sent_away
 
 
 def pick_drone(drone_list):
@@ -24,7 +25,9 @@ def pick_drone(drone_list):
         drone_id = drone['DRONE_ID']
         status = get_drone_status(drone_id)
         drones.append({'id': drone_id, 'status': status, 'mac': drone['DRONE_MAC'],
-                       'channel': drone['DRONE_CHANNEL'], 'client_mac': drone['CLIENT_MAC']})
+                       'channel': drone['DRONE_CHANNEL']
+                          , 'client_mac': drone['CLIENT_MAC']
+                       })
 
     # Remove from list drones already hacked (status == -1)
     drones = [d for d in drones if d['status'] != -1]
@@ -56,6 +59,7 @@ while True:
         print "-- no drones to hack"
         continue
 
+    print "-- drone found"
     try:
         # Set status as in_progress
         print "set hacking_in_progress"
@@ -76,6 +80,9 @@ while True:
                 # Send drone away
                 print "- send drone away"
                 perl.send_away()
+
+                # Set status as sent_away
+                drone_sent_away(drone)
 
                 # Go back to monitoring
                 print "-- back to monitor\n"

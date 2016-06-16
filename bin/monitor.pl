@@ -18,7 +18,7 @@ my @drone_macs = qw/90:03:B7 A0:14:3D 00:12:1C 00:26:7E/;
 
 $num_args = $#ARGV + 1;
 if ($num_args != 2) {
-    print "\nUsage: monitor.pl wlan0 wlan0mon\n";
+    print "\nUsage: monitor.pl wlan0 wlan1mon\n";
     exit;
 }
 
@@ -38,7 +38,7 @@ my $nodejs	= "nodejs";
 # sudo("airmon-ng", "check", "kill");
 
 # put device into monitor mode
-sudo($airmon, "start", $interface);
+#sudo($airmon, "start", $interface);
 
 # tmpfile for ap output
 my $tmpfile = "tmp/dronestrike";
@@ -46,6 +46,9 @@ my $tmpwpafile = "tmp/wpaconf";
 my $updatewpa = "bin/update_wpa.sh";
 my %skyjacked;
 
+my $interfaceMac = `ifconfig $interface | grep -i hwaddr | awk '{print \$5}'`;
+$interfaceMac = uc $interfaceMac;
+$interfaceMac =~ s/^\s+|\s+$//g;
 
 eval {
 	local $SIG{INT} = sub { die };
@@ -56,7 +59,7 @@ eval {
 	# wait 5 seconds then kill
 	# sleep 2;
 	# print DUMP "\cC";
-	sleep 4;
+	sleep 15;
 	sudo("kill", $pid);
 	sleep 1;
 	sudo("kill", "-HUP", $pid);
@@ -71,6 +74,7 @@ eval {
 
 my %clients;
 my %chans;
+#print "\nLABEL|DRONE_MAC|DRONE_CHANNEL|DRONE_ID\n";
 foreach my $tmpfile1 (glob("$tmpfile*.csv"))
 {
     open(my $fh, '>>', $tmpwpafile) or die "Could not open file '$tmpwpafile' $!";
@@ -85,7 +89,7 @@ foreach my $tmpfile1 (glob("$tmpfile*.csv"))
 			# determine the channel
 			if (/^($dev:[\w:]+),\s+\S+\s+\S+\s+\S+\s+\S+\s+(\d+),.*(ardrone\S+),/)
 			{
-				#print "CHANNEL $1 $2 $3\n";
+#				print "\nDATA|$1|$2|$3\n";
 				$chans{$1} = [$2, $3];
 
 				print "Add WPA $3";
@@ -115,7 +119,13 @@ print "LABEL|CLIENT_MAC|DRONE_ID|DRONE_MAC|DRONE_CHANNEL\n";
 
 foreach my $cli (keys %clients)
 {
-	print "DATA|$cli|$chans{$clients{$cli}}[1]|$clients{$cli}|$chans{$clients{$cli}}[0]\n";
+    if ($chans{$clients{$cli}}[1] ne "")
+    {
+        if ($interfaceMac ne $cli)
+        {
+            print "DATA|$cli|$chans{$clients{$cli}}[1]|$clients{$cli}|$chans{$clients{$cli}}[0]\n";
+        }
+    }
 }
 	
 sub sudo

