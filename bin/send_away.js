@@ -1,7 +1,7 @@
 var arDrone = require('../node_modules/ar-drone');
 var client  = arDrone.createClient();
 
-const destDegree = 0.0;
+const destDegree = parseFloat(process.argv[2]);
 const CLOCKWISE = 0;
 const COUNTERCLOCKWISE = 1;
 const directionLabel = {CLOCKWISE: 'clockwise', COUNTERCLOCKWISE: 'counterClockwise'};
@@ -53,13 +53,13 @@ var sendAway = function sendAway(navData) {
     	var speed = 0.5 * degrees / 90;
     	console.log(directionLabel[direction] + ' for ' + degrees + ' degrees at speed ' + speed);
 
-    	if (direction == CLOCKWISE) this.clockwise(1);
-    	else this.counterClockwise(1);
+    	if (direction == CLOCKWISE) this.clockwise(speed);
+    	else this.counterClockwise(speed);
     }
 }
 
 client.takeoff();
-console.log('took off');
+// console.log('took off');
 
 //Calibrate Magnetometer
 // client.after(5000, function() {
@@ -67,18 +67,19 @@ console.log('took off');
 // 	this.calibrate(0);
 // });
 
-// client.after(5000, function() {
-// 	console.log('calculate degree');
-// 	this.once('navdata', sendAway);
-// });
+client.after(5000, function() {
+ 	console.log('calculate degree');
+ 	this.once('navdata', sendAway);
+	// this.clockwise(0.5);
+ });
 
 client.after(2000, function() {
 	console.log('stop and land');
 	this.stop();
 	this.land();
-	this.after(1000, function() {
-		process.exit();
-	})
+	// this.after(4000, function() {
+// 		process.exit();
+// 	})
 });
 
 
@@ -88,3 +89,10 @@ client.after(2000, function() {
 // client.after(1000, function() {
 // 	process.exit();
 // });
+
+
+// client.on('navdata', function(navData) {
+// 	if(navData.demo) {
+// 		console.log(navData);
+// 	}
+// })

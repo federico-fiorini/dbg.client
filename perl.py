@@ -36,6 +36,7 @@ def hack(drone):
     else:
         interface = "wlan0"
 
+    print "Running: perl bin/hack.pl %s %s %s %s %s %s" % (drone['id'], drone['mac'], drone['channel'], drone['client_mac'], config.MONITOR_INTERFACE, interface)
     pipe = subprocess.Popen(["perl", "bin/hack.pl", drone['id'], drone['mac'], drone['channel'], drone['client_mac'],
                              config.MONITOR_INTERFACE, interface], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout_data, stderr_data = pipe.communicate()
