@@ -2,4 +2,5 @@ import os
 
 WEB_SERVER_HOST = 'http://127.0.0.1:5000'
 DEVICE_ID = 'UKNOWN_DEVICE'
-MONITOR_INTERFACE = os.environ.get('MONITOR_INTERFACE', 'wlan1')
+MONITOR_INTERFACE = os.environ.get('MONITOR_INTERFACE', 'wlan1mon')
+DEGREE_DIRECTION = os.environ.get('DEGREE_DIRECTION', '0')

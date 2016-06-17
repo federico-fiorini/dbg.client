@@ -29,8 +29,8 @@ var getRotation = function getRotation(fromDegree, toDegree) {
 	}
 
 	// If different sign
-	var through0 = Math.abs(toDegree) + Math.abs(fromDegree)
-	var through180 = (180 - Math.abs(toDegree)) + (180 - Math.abs(fromDegree))
+	var through0 = Math.abs(toDegree) + Math.abs(fromDegree);
+	var through180 = (180 - Math.abs(toDegree)) + (180 - Math.abs(fromDegree));
 
 	if (through0 < through180) {
 		if (fromDegree < 0)	return [CLOCKWISE, through0];
@@ -39,53 +39,56 @@ var getRotation = function getRotation(fromDegree, toDegree) {
 		if (fromDegree > 0)	return [CLOCKWISE, through180];
 		else return [COUNTERCLOCKWISE, through180];
 	}	
-}
+};
 
 
 var sendAway = function sendAway(navData) {
     if(navData.demo) {
     	var currDegree = navData.demo.clockwiseDegrees;
-    	console.log('clockwiseDegrees:' + currDegree);
-    	var rotation = getRotation(parseFloat(currDegree), destDegree)
+    	console.log('clockwiseDegrees:' + currDegree , new Date() / 1000);
+    	var rotation = getRotation(parseFloat(currDegree), destDegree);
 
     	var direction = rotation[0];
     	var degrees = rotation[1];
     	var speed = 0.5 * degrees / 90;
-    	console.log(directionLabel[direction] + ' for ' + degrees + ' degrees at speed ' + speed);
+    	console.log(direction + ' for ' + degrees + ' degrees at speed ' + speed , new Date() / 1000);
 
-    	if (direction == CLOCKWISE) this.clockwise(speed);
-    	else this.counterClockwise(speed);
+    	if (direction == CLOCKWISE) {
+			console.log("Clockwise" , new Date() / 1000);
+			this.clockwise(speed);
+		} else {
+			console.log("CounterClockwise" , new Date() / 1000);
+			this.counterClockwise(speed);
+		}
     }
-}
+};
 
-client.takeoff();
+// client.takeoff();
 // console.log('took off');
 
-//Calibrate Magnetometer
+// console.log('calculate degree' , new Date() / 1000);
 // client.after(5000, function() {
-// 	console.log('calibrate');
-// 	this.calibrate(0);
+// 	this.once('navdata', sendAway);
+// })
+// .after(2000, function() {
+// 	console.log('stop and land' , new Date() / 1000);
+// 	this.stop();
+// 	this.land();
+// })
+// .after(1000, function() {
+// 	console.log('exit' , new Date() / 1000);
+// 	process.exit();
 // });
 
-client.after(5000, function() {
- 	console.log('calculate degree');
- 	this.once('navdata', sendAway);
-	// this.clockwise(0.5);
- });
 
-client.after(2000, function() {
-	console.log('stop and land');
+
+client.after(500, function() {
 	this.stop();
 	this.land();
-	// this.after(4000, function() {
-// 		process.exit();
-// 	})
+})
+	.after(2000, function() {
+	process.exit();
 });
-
-
-
-// client.stop();
-// client.land();
 // client.after(1000, function() {
 // 	process.exit();
 // });

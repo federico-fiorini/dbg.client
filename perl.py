@@ -9,6 +9,7 @@ def monitor():
     else:
         interface = "wlan0"
 
+    print "Running: perl bin/monitor.pl %s %s" % (interface, config.MONITOR_INTERFACE)
     pipe = subprocess.Popen(["perl", "bin/monitor.pl", interface, config.MONITOR_INTERFACE],
                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout_data, stderr_data = pipe.communicate()
@@ -45,5 +46,10 @@ def hack(drone):
 
 
 def send_away():
-    pipe = subprocess.Popen(["node", "bin/send_away.js"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print "Running: %s %s %s" % ("node", "bin/send_away.js", config.DEGREE_DIRECTION)
+    pipe = subprocess.Popen(["node", "bin/send_away.js", config.DEGREE_DIRECTION], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout_data, stderr_data = pipe.communicate()
+
+    output_lines = stdout_data.splitlines()
+    for line in output_lines:
+        print line
