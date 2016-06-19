@@ -34,7 +34,7 @@ def drone_hacked(drone, count=0):
 
 def drone_sent_away(drone, count=0):
 
-    data['status'] = 'landed'
+    data['status'] = 'sent_away'
 
     try:
         response = requests.put(host + '/drone/' + drone['id'], data=json.dumps(data), headers=headers, timeout=1)
@@ -104,7 +104,7 @@ def get_drone_status(drone_id, count=0):
         if json_response['drone']['status'] == 'hacked':
             return -1
 
-        if json_response['drone']['status'] == 'landed':
+        if json_response['drone']['status'] == 'sent_away':
             return 1
 
         if json_response['drone']['status'] == 'in_progress':

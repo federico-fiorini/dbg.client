@@ -1,19 +1,7 @@
-#!.env/bin/python
-
 from operator import itemgetter
 import sys
 import config
 import perl
-
-try:
-    if sys.argv[1] == '--help':
-        exit('How to run: ./main.py DEVICE_ID SERVER_HOST')
-
-    config.DEVICE_ID = sys.argv[1]
-    config.WEB_SERVER_HOST = sys.argv[2]
-except IndexError:
-    pass
-
 from drone import get_drone_status, hacking_in_progress, drone_hacked, drone_lost,\
     log_fail, DroneLostException, drone_sent_away
 

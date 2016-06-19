@@ -56,10 +56,8 @@ eval {
 	my $pid = open(DUMP, "|sudo $airodump --output-format csv -w $tmpfile $interfaceMon >>/dev/null 2>>/dev/null") || die "Can't run airodump ($airodump): $!";
 	# print "pid $pid\n";
 
-	# wait 5 seconds then kill
-	# sleep 2;
-	# print DUMP "\cC";
-	sleep 15;
+	# wait 10 seconds then kill
+	sleep 10;
 	sudo("kill", $pid);
 	sleep 1;
 	sudo("kill", "-HUP", $pid);

