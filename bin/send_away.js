@@ -1,6 +1,7 @@
 var arDrone = require('../node_modules/ar-drone');
 var client  = arDrone.createClient();
 
+// Get from argument Destination Degree (0 is north)
 const destDegree = parseFloat(process.argv[2]);
 const CLOCKWISE = 0;
 const COUNTERCLOCKWISE = 1;
@@ -42,60 +43,39 @@ var getRotation = function getRotation(fromDegree, toDegree) {
 };
 
 
-var sendAway = function sendAway(navData) {
+var turn = function turn(navData) {
     if(navData.demo) {
     	var currDegree = navData.demo.clockwiseDegrees;
-    	console.log('clockwiseDegrees:' + currDegree , new Date() / 1000);
+    	console.log('clockwiseDegrees:' + currDegree);
     	var rotation = getRotation(parseFloat(currDegree), destDegree);
 
     	var direction = rotation[0];
     	var degrees = rotation[1];
     	var speed = 0.5 * degrees / 90;
-    	console.log(direction + ' for ' + degrees + ' degrees at speed ' + speed , new Date() / 1000);
+    	console.log(direction + ' for ' + degrees + ' degrees at speed ' + speed);
 
     	if (direction == CLOCKWISE) {
-			console.log("Clockwise" , new Date() / 1000);
+			console.log("Clockwise");
 			this.clockwise(speed);
 		} else {
-			console.log("CounterClockwise" , new Date() / 1000);
+			console.log("CounterClockwise");
 			this.counterClockwise(speed);
 		}
     }
 };
 
-// client.takeoff();
-// console.log('took off');
-
-// console.log('calculate degree' , new Date() / 1000);
-// client.after(5000, function() {
-// 	this.once('navdata', sendAway);
-// })
-// .after(2000, function() {
-// 	console.log('stop and land' , new Date() / 1000);
-// 	this.stop();
-// 	this.land();
-// })
-// .after(1000, function() {
-// 	console.log('exit' , new Date() / 1000);
-// 	process.exit();
-// });
-
-
-
-client.after(500, function() {
-	this.stop();
-	this.land();
-})
+// On navigation data, turn to right direction
+client.once('navdata', turn)
 	.after(2000, function() {
-	process.exit();
-});
-// client.after(1000, function() {
-// 	process.exit();
-// });
-
-
-// client.on('navdata', function(navData) {
-// 	if(navData.demo) {
-// 		console.log(navData);
-// 	}
-// })
+		// After turning, send away for 10 sec
+		this.front(1);
+	})
+	.after(10000, function() {
+		console.log('stop and land');
+		this.stop();
+		this.land();
+	})
+	.after(1000, function() {
+		console.log('exit');
+		process.exit();
+	});
