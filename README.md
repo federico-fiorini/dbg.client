@@ -1,8 +1,8 @@
-##DRONE BE GONE - CLIENT
+## DRONE BE GONE - CLIENT
 <br>
 Drone Be Gone is a system that creates a no-fly zone where drones cannot enter. Currently works only with Parrot AR.Drones (controlled via wifi).
 
-###HOW IT WORKS
+### HOW IT WORKS
 The system works with a certain number of devices (I used Raspberry Pi) disposed on the perimeter of the designed no-fly zone and connected to a central web server that implements a simple REST API and shows logs informations. <br>
 
 [Here](https://github.com/federico-fiorini/dbg.client) there is the implementation of the client application while [this](https://github.com/federico-fiorini/dbg.web-server) is the web server implementation. <br>
@@ -18,20 +18,20 @@ The client application detects incoming drones that enter the wifi range of the 
 
 An exchange of messages between the devices and the central web server is implemented to set the status of the drones detected and in order for the device to decide if to hack the drone or not (in case another device has already taken control of it).
 
-#####SYSTEM CONFIGURATION
+##### SYSTEM CONFIGURATION
 I use a Raspberry Pi with two antennas connected ([Alpha antenna](https://www.amazon.com/Alfa-AWUS036H-802-11b-Wireless-network/dp/B002WCEWU8)) and connected via Ethernet to the local network.
 ![alt tag](http://i.imgur.com/b9rieBd.png)
 
 Another configuration is possible using one wifi dongle and one antenna. The wifi dongle has a less wide range though.
 
 
-###HOW IT IS IMPLEMENTED
+### HOW IT IS IMPLEMENTED
 This project is based on [samyk](https://github.com/samyk) [skyjack](https://github.com/samyk/skyjack) work. It uses similar implementation for the monitoring and hacking parts using [aircrack-ng](http://www.aircrack-ng.org/).<br>
 To control the drone it uses [node-ar-drone](https://github.com/felixge/node-ar-drone) library.<br>
 The main loop runs in python. 
 
 
-###DEPENDENCIES
+### DEPENDENCIES
 
 	# Steps for installing aircrack-ng on raspberry pi:
     
@@ -61,7 +61,7 @@ The main loop runs in python.
     # Install requests module for python
     pip install requests
 
-###HOW TO RUN
+### HOW TO RUN
 
     # Kill ongoing processes
     sudo airmon-ng check kill
